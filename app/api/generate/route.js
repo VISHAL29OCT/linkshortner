@@ -1,5 +1,6 @@
-import clientPromise from "@/lib/mongodb";
+export const dynamic = "force-dynamic";
 
+import clientPromise from "@/lib/mongodb";
 export async function POST(request) {
   try {
     const body = await request.json();
