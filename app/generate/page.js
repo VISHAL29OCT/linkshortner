@@ -9,34 +9,62 @@ const Generate = () => {
   const [shorturl, setShorturl] = useState("")
   const [generated, setGenerated] = useState("")
 
-const generate = () => {
-  const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+  const generate = () => {
 
-const raw = JSON.stringify({
-  "url": url,
-  "shorturl":shorturl
-});
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-const requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow"
-};
+    const raw = JSON.stringify({
+      "url": url,
+      "shorturl": shorturl
+    });
 
-fetch("/api/generate", requestOptions)
-  .then((response) => response.json())
-  .then((result) => {
-    setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`)
-    setUrl("")
-    setShorturl("")
-    console.log(result)
-  alert(result.message)
-  })
-  .catch((error) => console.error(error));
-}
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
 
+    fetch("/api/generate", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+
+        if (result.success) {
+
+          const fullShortUrl = `${process.env.NEXT_PUBLIC_HOST}/${shorturl}`
+
+          setGenerated(fullShortUrl)
+          setUrl("")
+          setShorturl("")
+          console.log(result)
+          alert(result.message)
+
+          // ✅ Save only after success
+          const newLink = {
+            longUrl: url,
+            shortUrl: fullShortUrl,
+            shortCode: shorturl,
+            createdAt: new Date().toISOString()
+          };
+
+          let existing = JSON.parse(localStorage.getItem("recentLinks")) || [];
+
+          existing.unshift(newLink);
+
+          if (existing.length > 5) {
+            existing = existing.slice(0, 5);
+          }
+
+          localStorage.setItem("recentLinks", JSON.stringify(existing));
+
+        } else {
+          alert(result.message)
+        }
+
+      })
+      .catch((error) => console.error(error));
+  }
 
   return (
     <div className='mx-auto max-w-lg bg-purple-100 my-16 p-8 rounded-lg flex flex-col gap-4 text-red-500'>
@@ -61,15 +89,22 @@ fetch("/api/generate", requestOptions)
           onChange={e => setShorturl(e.target.value)}
         />
 
-        <button onClick={generate}
-        
-        className='bg-blue-300 text-white my-3 rounded-lg shadow-2xl p-2 font-bold cursor-pointer'
+        <button
+          onClick={generate}
+          className='bg-blue-300 text-white my-3 rounded-lg shadow-2xl p-2 font-bold cursor-pointer'
         >
           GENERATE
         </button>
       </div>
-     { generated &&  <> <span className='font-bold text-lg'>YOUR  Link</span> <code> <Link target="_blank" href={generated}>{generated}</Link>
-      </code></>} 
+
+      {generated && <>
+        <span className='font-bold text-lg'>YOUR Link</span>
+        <code>
+          <Link target="_blank" href={generated}>
+            {generated}
+          </Link>
+        </code>
+      </>}
     </div>
   )
 }

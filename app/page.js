@@ -29,7 +29,7 @@ export default function Home() {
               </Link>
 
               <Link
-                href="/github"
+                href="https://github.com"
                 className="bg-blue-400 rounded-lg shadow-2xl p-2 font-bold"
               >
                 GITHUB

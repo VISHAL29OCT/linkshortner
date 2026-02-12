@@ -7,13 +7,13 @@ const Navbar = () => {
       
       {/* LOGO */}
       <div className="logo font-bold text-lg">
-        <Link href="/">BitLink</Link>
+        <Link href="/">SHORTLINK</Link>
       </div>
 
       {/* MENU */}
       <ul className="flex items-center gap-4">
         <li>
-          <Link href="/home">Home</Link>
+          <Link href="/">Home</Link>
         </li>
 
         <li>
@@ -37,10 +37,10 @@ const Navbar = () => {
           </Link>
 
           <Link
-            href="/github"
+            href="/dashboard"
             className="bg-blue-300 rounded-lg shadow-2xl p-2 font-bold"
           >
-            GITHUB
+            Dashboard
           </Link>
         </li>
       </ul>
